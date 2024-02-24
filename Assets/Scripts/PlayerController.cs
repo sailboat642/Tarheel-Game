@@ -14,15 +14,13 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 10f;
 
     private Rigidbody2D rb;
-    private PlayerStates _state = PlayerStates.FINDING_TASK;
+    private PlayerStates _state = PlayerStates.DEFAULT;
 
     private GameObject SelectedInteractive;
-    public GameObject customer;
-    
-
+    private GameObject[] Carrying = new GameObject[2];
 
     public enum PlayerStates {
-        FINDING_TASK,
+        DEFAULT,
         GUIDING,
         SERVING,
         INTERACTING
@@ -99,28 +97,67 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void ChangeState (PlayerStates new_state)
+    private void ChangeState (PlayerStates new_state)
     {
         _state = new_state;
         Debug.Log(new_state);
     }
 
-    public void Test()
+    public void Interact()
     {
-        if (_state != PlayerStates.GUIDING) {
-            ChangeState(PlayerStates.GUIDING);
-        } else {
-            ChangeState(PlayerStates.FINDING_TASK);
+        switch (_state) {
+            case PlayerStates.DEFAULT:
+                RecieveNewCustomer();
+                break;
+            case PlayerStates.GUIDING:
+                AssignCustomerToTable();
+                break;
         }
     }
 
+
+    /***********************************************************************
+    ********************Interactions****************************************
+    ************************************************************************/
+
+    // ------------------ Customer -------------------------
     public void GuideCustomer()
     {
-        Vector3 difference = transform.position - customer.transform.position;
+        Vector3 difference = transform.position - Carrying[0].transform.position;
         if (difference.magnitude > 0.2) {
             Vector3 direction = difference/difference.magnitude;
-            customer.transform.position = customer.transform.position + (direction * moveSpeed * 0.6f * Time.deltaTime);
+            Carrying[0].transform.position = Carrying[0].transform.position + (direction * moveSpeed * 0.6f * Time.deltaTime);
         }
     }
 
+    
+    // ------------------   Table  -------------------------
+    
+    public void AssignCustomerToTable()
+    {
+        if (SelectedInteractive != null && _state == PlayerStates.GUIDING) {
+            Table table = SelectedInteractive.GetComponent<Table>();
+            if (table.isFree()) {
+                table.SeatCustomer(Carrying[0].GetComponent<CustomerController>(), true);
+                Carrying[0] = null;
+                ChangeState(PlayerStates.DEFAULT);
+            }
+        }
+    }
+
+    // ------------------  Checkin Counter ------------------
+
+    public void RecieveNewCustomer()
+    {
+        if (SelectedInteractive != null && _state == PlayerStates.DEFAULT) {
+            CustomerQueue checkoutCounter = SelectedInteractive.GetComponent<CustomerQueue>();
+            Carrying[0] = checkoutCounter.GetNextCustomerGroup();
+            if (Carrying[0] != null) {
+                ChangeState(PlayerStates.GUIDING);
+            }
+        }
+    }
+
+
+    // ------------------ Order Counter ---------------------
 }
