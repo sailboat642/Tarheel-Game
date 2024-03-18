@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5223194797078928462}
   - component: {fileID: 5192553596885372711}
   - component: {fileID: 1575450280044920330}
+  - component: {fileID: 7171574305754327269}
   m_Layer: 0
   m_Name: Customer
   m_TagString: Untagged
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.23, y: -0.6, z: 0}
-  m_LocalScale: {x: 0.10810405, y: 0.10810405, z: 0.10810405}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -76,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: 853496933
   m_SortingLayer: 1
   m_SortingOrder: 1
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.43529415, g: 0.89019614, b: 0.5803922, a: 1}
+  m_Sprite: {fileID: -1750503300, guid: 77f79fd7f0bda492d9b82b3c568d8ba4, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -119,9 +120,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.26941544}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.23058456
 --- !u!50 &5192553596885372711
 Rigidbody2D:
   serializedVersion: 4
@@ -161,6 +162,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6863ef03225244cc8f3ab2cce278819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
-  target: {fileID: 0}
-  separation: 0.5
+  moveSpeed: 0.3
+--- !u!95 &7171574305754327269
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989094251168117173}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e9ae8ed43ca88404eadb6c16f551ee6e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

@@ -4,22 +4,26 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
-    private SpriteRenderer sr;
+    protected SpriteRenderer sr;
+    [SerializeField] protected GameObject Interactions;
+    protected BurgerShack shack;
 
     public void Awake()
     {
+        GameObject controller = GameObject.FindGameObjectsWithTag("GameController")[0];
+        shack = controller.GetComponent<BurgerShack>();
         sr = GetComponent<SpriteRenderer>();
         sr.color = new Color(255, 255, 255, 0.8f);
     }
-    public void ShowInteraction()
+    public virtual void ShowInteraction()
     {
-        Debug.Log("Interacting with " + gameObject.name);
+        Interactions.SetActive(true);
         sr.color = new Color(255, 255, 255, 1f);
     }
     
     public void HideInteraction()
     {
-        Debug.Log("Disconnecting with " + gameObject.name);
+        Interactions.SetActive(false);
         sr.color = new Color(255, 255, 255, 0.8f);
     }
 

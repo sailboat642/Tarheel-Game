@@ -4,18 +4,43 @@ using UnityEngine;
 
 public class Table : Interactable
 {
+    public static List<Table> ActiveTables = new List<Table>();
     private CustomerController[] Customers = new CustomerController[2];
     [SerializeField] private Transform[] SeatPos;
     private bool _isFree = true;
+
+    private State _state = State.DEFAULT;
+
+    public enum State {
+        DEFAULT,
+        DIRTY,
+        SERVING
+    }
+
+    void OnEnable() 
+    {
+        ActiveTables.Add(this);
+    }
+
+    void OnDisable()
+    {
+        ActiveTables.Remove(this);
+    }
+
+    public static bool HasOpenTable()
+    {
+        foreach(Table cur in ActiveTables) {
+            if (cur.isFree()) return true;
+        }
+
+        return false;
+    }
+
 
     public bool isFree() {
         return _isFree;
     }
     
-    void Start()
-    {
-        Debug.Log(SeatPos.Length);
-    }
 
     public void SeatCustomer(CustomerController customer, bool seatA)
     {
@@ -34,10 +59,12 @@ public class Table : Interactable
             Customers[1] = customer;
             customer.Sit(SeatPos[1]);
         }
+
+        _state = State.SERVING;
     }
 
     public void ClearTable()
     {
-        return;
+        _state = State.DIRTY;
     }
 }

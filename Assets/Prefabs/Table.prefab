@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 4063572759393966469}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.1388, y: 0.0071, z: 0.004237484}
+  m_LocalPosition: {x: 0.1388, y: 0.043, z: 0.004237484}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -176,6 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f1c1dc72b02744758b60aabce1f5fb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Interactions: {fileID: 0}
   SeatPos:
   - {fileID: 3974827594430584045}
   - {fileID: 7499462690279562949}
@@ -204,7 +205,7 @@ Transform:
   m_GameObject: {fileID: 6966726926220199847}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.1547, y: 0.008, z: 0.004237484}
+  m_LocalPosition: {x: -0.137, y: 0.097, z: 0.004237484}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

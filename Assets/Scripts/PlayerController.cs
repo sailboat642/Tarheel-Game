@@ -100,19 +100,7 @@ public class PlayerController : MonoBehaviour
     private void ChangeState (PlayerStates new_state)
     {
         _state = new_state;
-        Debug.Log(new_state);
-    }
-
-    public void Interact()
-    {
-        switch (_state) {
-            case PlayerStates.DEFAULT:
-                RecieveNewCustomer();
-                break;
-            case PlayerStates.GUIDING:
-                AssignCustomerToTable();
-                break;
-        }
+        // Debug.Log(new_state);
     }
 
 
@@ -121,24 +109,29 @@ public class PlayerController : MonoBehaviour
     ************************************************************************/
 
     // ------------------ Customer -------------------------
-    public void GuideCustomer()
+    
+    // Guiding Function for Update()
+    private void GuideCustomer() 
     {
         Vector3 difference = transform.position - Carrying[0].transform.position;
+        CustomerController customer = Carrying[0].GetComponent<CustomerController>();
         if (difference.magnitude > 0.2) {
             Vector3 direction = difference/difference.magnitude;
-            Carrying[0].transform.position = Carrying[0].transform.position + (direction * moveSpeed * 0.6f * Time.deltaTime);
+            customer.SetMovement(direction, true);
+        } else {
+            customer.SetMovement(Vector2.zero, false);
         }
     }
 
     
     // ------------------   Table  -------------------------
     
-    public void AssignCustomerToTable()
+    public void AssignCustomerToTable(bool seatA)
     {
         if (SelectedInteractive != null && _state == PlayerStates.GUIDING) {
             Table table = SelectedInteractive.GetComponent<Table>();
             if (table.isFree()) {
-                table.SeatCustomer(Carrying[0].GetComponent<CustomerController>(), true);
+                table.SeatCustomer(Carrying[0].GetComponent<CustomerController>(), seatA);
                 Carrying[0] = null;
                 ChangeState(PlayerStates.DEFAULT);
             }
@@ -149,7 +142,7 @@ public class PlayerController : MonoBehaviour
 
     public void RecieveNewCustomer()
     {
-        if (SelectedInteractive != null && _state == PlayerStates.DEFAULT) {
+        if (SelectedInteractive != null && _state == PlayerStates.DEFAULT && Table.HasOpenTable()) {
             CustomerQueue checkoutCounter = SelectedInteractive.GetComponent<CustomerQueue>();
             Carrying[0] = checkoutCounter.GetNextCustomerGroup();
             if (Carrying[0] != null) {
