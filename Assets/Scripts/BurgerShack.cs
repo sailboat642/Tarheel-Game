@@ -12,6 +12,7 @@ public class BurgerShack : MonoBehaviour
 
     public GameObject queueRef;
     private CustomerQueue customerQueue;
+
     public Queue<string> order_queue = new Queue<string>();
 
     
@@ -83,5 +84,18 @@ public class BurgerShack : MonoBehaviour
         }
 
         stoveIsFree = true;
+    }
+
+    public bool RemoveOrderFromQueue(string order_name)
+    {
+        // search for order from back of list
+        // remove
+        return false;
+    }
+
+    public Dictionary<string, int> GetOrderCount()
+    {
+        Dictionary<string, int> order_count = new Dictionary<string, int>();
+        return order_count;
     }
 }

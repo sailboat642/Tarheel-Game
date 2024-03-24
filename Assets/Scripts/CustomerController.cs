@@ -52,10 +52,11 @@ public class CustomerController : MonoBehaviour
     public void SetMovement(Vector2 moveVector, bool isMoving)
     {
         this.moveVector = moveVector;
-        animator.SetFloat("MoveX", moveVector.x);
-        animator.SetFloat("MoveY", moveVector.y);
         animator.SetBool("IsWalking", isMoving);
-
+        if (isMoving) {
+            animator.SetFloat("MoveX", moveVector.x);
+            animator.SetFloat("MoveY", moveVector.y);
+        }
     }
 
     public void Sit(Transform location)
