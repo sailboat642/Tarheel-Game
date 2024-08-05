@@ -59,6 +59,7 @@ public class Table : Interactable
             Customers[1] = customer;
             customer.Sit(SeatPos[1]);
         }
+        customer.OnFoodRecieved();
 
         _state = State.SERVING;
     }
@@ -66,5 +67,15 @@ public class Table : Interactable
     public void ClearTable()
     {
         _state = State.DIRTY;
+        if (Customers[0]) {
+            Customers[0].LeaveDiner();
+            Customers[0] = null;
+        }
+
+        if(Customers[1]) {
+            Customers[1].LeaveDiner();
+            Customers[1] = null;
+        }
+        _isFree = true;
     }
 }

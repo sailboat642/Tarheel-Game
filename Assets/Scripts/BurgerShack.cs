@@ -15,10 +15,10 @@ public class BurgerShack : MonoBehaviour
 
     public Queue<string> order_queue = new Queue<string>();
 
-    
-
     public int n_customers;
     public float interval;
+
+    public Transform[] Exits;
     // Start is called before the first frame update
     void Awake()
     {

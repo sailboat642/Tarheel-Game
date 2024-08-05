@@ -41,10 +41,6 @@ public class PlayerController : MonoBehaviour
         }
         animator.SetBool("isMoving", isMoving);
 
-        if (_state == PlayerStates.GUIDING) {
-            GuideCustomer();
-        }
-
     }
 
     void FixedUpdate()
@@ -100,7 +96,6 @@ public class PlayerController : MonoBehaviour
     private void ChangeState (PlayerStates new_state)
     {
         _state = new_state;
-        // Debug.Log(new_state);
     }
 
 
@@ -108,34 +103,25 @@ public class PlayerController : MonoBehaviour
     ********************Interactions****************************************
     ************************************************************************/
 
-    // ------------------ Customer -------------------------
-    
-    // Guiding Function for Update()
-    private void GuideCustomer() 
-    {
-        Vector3 difference = transform.position - Carrying[0].transform.position;
-        CustomerController customer = Carrying[0].GetComponent<CustomerController>();
-        if (difference.magnitude > 0.2) {
-            Vector3 direction = difference/difference.magnitude;
-            customer.SetMovement(direction, true);
-        } else {
-            customer.SetMovement(Vector2.zero, false);
-        }
-    }
-
     
     // ------------------   Table  -------------------------
-    
-    public void AssignCustomerToTable(bool seatA)
-    {
+    public void TableInteraction(bool seatA) {
         if (SelectedInteractive != null && _state == PlayerStates.GUIDING) {
             Table table = SelectedInteractive.GetComponent<Table>();
             if (table.isFree()) {
-                table.SeatCustomer(Carrying[0].GetComponent<CustomerController>(), seatA);
-                Carrying[0] = null;
-                ChangeState(PlayerStates.DEFAULT);
+                AssignCustomerToTable(table, seatA);
+            } else {
+                table.ClearTable();
             }
         }
+    }
+    public void AssignCustomerToTable(Table table, bool seatA)
+    {
+        CustomerController customer = Carrying[0].GetComponent<CustomerController>();
+        customer.StopMoving();
+        table.SeatCustomer(customer, seatA);
+        Carrying[0] = null;
+        ChangeState(PlayerStates.DEFAULT);
     }
 
     // ------------------  Checkin Counter ------------------
@@ -147,6 +133,9 @@ public class PlayerController : MonoBehaviour
             Carrying[0] = checkoutCounter.GetNextCustomerGroup();
             if (Carrying[0] != null) {
                 ChangeState(PlayerStates.GUIDING);
+                CustomerController customer = Carrying[0].GetComponent<CustomerController>();
+                customer.SetTargetForPath(transform);
+                customer.FollowObject();
             }
         }
     }

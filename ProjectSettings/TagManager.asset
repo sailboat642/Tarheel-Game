@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CustomerPath
   - Interactive
+  - Exit
   layers:
   - Default
   - TransparentFX

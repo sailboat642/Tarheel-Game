@@ -1,16 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 public class CustomerController : MonoBehaviour
 {
-    // GameObject[] PathPoints;
-    // private int pointsIndex;
-
-    // [SerializeField] private float moveSpeed;
-    // [SerializeField] private Transform target;
-    // [SerializeField] private float separation = 0.5f;
-    // private Vector3 offset = new Vector3(0f, 0f, -1.0f);
     string OrderPreference;
     BurgerShack shack;
     private string OrderName;
@@ -19,10 +13,19 @@ public class CustomerController : MonoBehaviour
     private Rigidbody2D rb;
 
     private bool isMoving;
-    private Vector2 moveVector;
-    public float moveSpeed = 2.5f;
+    public Animator animator;
 
-    private Animator animator;
+    private Transform target;
+    
+    public float speed = 200f;
+    public float nextWaypointDistance = 0.15f;
+
+    Path path;
+    int currentWaypoint = 0;
+    bool reachedEndOfPath = false;
+
+    Seeker seeker;
+    
 
     public State GetState() {
         return _state;
@@ -40,37 +43,20 @@ public class CustomerController : MonoBehaviour
     {
         GameObject controller = GameObject.FindGameObjectsWithTag("GameController")[0];
         shack = controller.GetComponent<BurgerShack>();
-        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        seeker = GetComponent<Seeker>();
     }
 
-    void FixedUpdate()
-    {
-        rb.velocity = moveVector*moveSpeed;
-    }
-
-    public void SetMovement(Vector2 moveVector, bool isMoving)
-    {
-        this.moveVector = moveVector;
-        animator.SetBool("IsWalking", isMoving);
-        if (isMoving) {
-            animator.SetFloat("MoveX", moveVector.x);
-            animator.SetFloat("MoveY", moveVector.y);
-        }
-    }
 
     public void Sit(Transform location)
     {
-        Collider2D collider = GetComponent<Collider2D>();
-        collider.enabled = false;
-        transform.position = location.position;
-        moveVector = Vector2.zero;
+        rb.position = (Vector2)location.position;
         _state = State.WAITING;
         animator.SetBool("IsSitting", true);
-        animator.SetBool("IsWalking", false);
+        animator.SetBool("IsMoving", false);
     }
 
-    // private void CalculateMovement();
+
 
     public string PlaceOrder()
     {
@@ -93,17 +79,124 @@ public class CustomerController : MonoBehaviour
 
     private IEnumerator EatFood()
     {
+        animator.SetBool("IsEating", true);
         yield return new WaitForSeconds(12f);
+        animator.SetBool("IsEating", false);
     }
 
     public void OnFoodRecieved()
     {
         _state = State.EATING;
         StartCoroutine(EatFood());
-        // animation
-        // Calculate Tip
-        // Wait for other customer to finish eating
-        // Leave Money
+        LeaveDiner();
+    }
+
+    public void SetTargetForPath(Transform target)
+    {
+        this.target = target;
+    }
+
+    public void FollowObject()
+    {
+        InvokeRepeating("UpdatePath", 0, 0.5f);
+    }
+
+    public void StopMoving()
+    {
+        target = null;
+        CancelInvoke("UpdatePath");
+        path = null;
+        rb.velocity = Vector2.zero;
+        Debug.Log("Stop");
+        animator.SetBool("IsMoving", false);
+    }
+
+    public void LeaveDiner()
+    {
+        Transform closest = null;
+        float cur_distance = 9999.999f;
+        foreach (Transform exit in shack.Exits) {
+            float exit_distance = (exit.position - transform.position).magnitude;
+            if (cur_distance > exit_distance) {
+                closest = exit;
+                cur_distance = exit_distance;
+            }
+            Debug.Log(cur_distance);
+        }
+
+        target = closest;
+        animator.SetBool("IsSitting", false);
+        animator.SetBool("IsMoving", true);
+        animator.SetBool("IsEating", false);
+
+        UpdatePath();
+
+    }
+
+    public void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("Exit")){
+            Destroy(this.gameObject);
+        }
+    }
+
+
+
+    /********************************************************************
+    ***************** PathFinding ***************************************
+    ********************************************************************/
+
+    void UpdatePath()
+    {
+        seeker.StartPath(rb.position, target.position, OnPathComplete);
+    }
+
+    void OnPathComplete(Path p)
+    {
+        if (!p.error) {
+            path = p;
+            currentWaypoint = 0;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (path == null)
+            return;
+        
+        if (currentWaypoint >= path.vectorPath.Count) {
+            reachedEndOfPath = true;
+            return;
+        } else {
+            reachedEndOfPath = false;
+        }
+
+        float distanceToTarget =  ((Vector2)target.position - rb.position).magnitude;
+        Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+
+        if (distanceToTarget > 0.1) {
+            rb.velocity = speed * direction;
+        } else {
+            rb.velocity = Vector2.zero;
+        }
+
+        
+
+        float distance = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
+        if (distance < nextWaypointDistance) {
+            currentWaypoint++;
+        }
+
+
+
+
+
+        if (rb.velocity == Vector2.zero) {
+            animator.SetBool("IsMoving", false);
+        } else {
+            animator.SetBool("IsMoving", true);
+            animator.SetFloat("MoveX", rb.velocity.x);
+            animator.SetFloat("MoveY", rb.velocity.y);
+        }
     }
 
 }

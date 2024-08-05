@@ -12,7 +12,6 @@ public class CustomerQueue : Interactable
     {
         Interactions.SetActive(true);
         sr.color = new Color(255, 255, 255, 1f);
-        Debug.Log("Hi");
         GameObject nextCustomer = _queue.Peek();
         Debug.Log(nextCustomer.name);
         if (nextCustomer) {
@@ -55,16 +54,6 @@ public class CustomerQueue : Interactable
         }
         // get next customers order
         // add to queue
-    }
-
-    public void DoAction()
-    {
-        // display interaction menu
-    }
-
-    public void AddOrder(string name)
-    {
-        // add order to queue
     }
 
 }
