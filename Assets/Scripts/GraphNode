@@ -1,0 +1,38 @@
+using UnityEngine;
+
+public class GraphNode
+{
+    public Rect rect;
+    private string title;
+    private bool isDragged;
+
+    public GraphNode(Vector2 position, float width, float height)
+    {
+        rect = new Rect(position.x, position.y, width, height);
+        title = "Node";
+    }
+
+    public void Drag(Vector2 delta)
+    {
+        rect.position += delta;
+    }
+
+    public void Draw()
+    {
+        GUI.Box(rect, title, EditorStyles.helpBox);
+    }
+
+    public void DrawConnection(GraphNode targetNode)
+    {
+        Handles.DrawBezier(
+            rect.center,
+            targetNode.rect.center,
+            rect.center + Vector2.left * 50f,
+            targetNode.rect.center - Vector2.left * 50f,
+            Color.white,
+            null,
+            2f
+        );
+    }
+
+}

@@ -79,6 +79,7 @@ public class CustomerController : MonoBehaviour
 
     private IEnumerator EatFood()
     {
+        yield return new WaitForSeconds(1f);
         animator.SetBool("IsEating", true);
         yield return new WaitForSeconds(12f);
         animator.SetBool("IsEating", false);
@@ -88,7 +89,6 @@ public class CustomerController : MonoBehaviour
     {
         _state = State.EATING;
         StartCoroutine(EatFood());
-        LeaveDiner();
     }
 
     public void SetTargetForPath(Transform target)
