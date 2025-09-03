@@ -106,9 +106,9 @@ public class PlayerController : MonoBehaviour
     
     // ------------------   Table  -------------------------
     public void TableInteraction(bool seatA) {
-        if (SelectedInteractive != null && _state == PlayerStates.GUIDING) {
+        if (SelectedInteractive != null) {
             Table table = SelectedInteractive.GetComponent<Table>();
-            if (table.isFree()) {
+            if (table.isFree() && _state == PlayerStates.GUIDING) {
                 AssignCustomerToTable(table, seatA);
             } else {
                 table.ClearTable();

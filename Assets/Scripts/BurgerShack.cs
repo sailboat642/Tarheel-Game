@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class BurgerShack : MonoBehaviour
 {
     private GameObject player;
     private float tips;
 
-    private float _totalSales;
+    // UI Variables
+    public TextMeshProUGUI saleText;
+
+    private float TotalSales = 0.00f;
     public Dictionary<string, Order> Menu;
 
     public GameObject queueRef;
@@ -24,6 +28,7 @@ public class BurgerShack : MonoBehaviour
     {
         player = GameObject.FindGameObjectsWithTag("Player")[0];
         customerQueue = queueRef.GetComponent<CustomerQueue>();
+        saleText.text = "$0.00";
 
 
         PlayerController playerController = player.GetComponent<PlayerController>();
@@ -44,7 +49,12 @@ public class BurgerShack : MonoBehaviour
         Menu.Add("Kenny J", new Order("Kenny J", 5.00f, 12f));
         Menu.Add("Mookie", new Order("Mookie", 5.25f, 10f));
         Menu.Add("Paco", new Order("Paco", 6.00f, 15f));
+    }
 
+    public void UpdateSales(float NewSale)
+    {
+        TotalSales += NewSale;
+        saleText.text ="$" + TotalSales;
     }
 
     IEnumerator CallCustomersWithInterval(int n, float interval)

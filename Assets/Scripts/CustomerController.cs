@@ -5,7 +5,7 @@ using Pathfinding;
 
 public class CustomerController : MonoBehaviour
 {
-    string OrderPreference;
+    float OrderAmount = 11.50f;
     BurgerShack shack;
     private string OrderName;
     private State _state = State.DEFAULT;
@@ -83,12 +83,19 @@ public class CustomerController : MonoBehaviour
         animator.SetBool("IsEating", true);
         yield return new WaitForSeconds(12f);
         animator.SetBool("IsEating", false);
+        yield return new WaitForSeconds(0.5f);
     }
 
     public void OnFoodRecieved()
     {
         _state = State.EATING;
         StartCoroutine(EatFood());
+        _state = State.WAITING;
+    }
+
+    void SettleBill()
+    {
+        shack.UpdateSales(OrderAmount);
     }
 
     public void SetTargetForPath(Transform target)
@@ -113,6 +120,11 @@ public class CustomerController : MonoBehaviour
 
     public void LeaveDiner()
     {
+        if (_state != State.WAITING)
+            return;
+
+        
+        SettleBill();
         Transform closest = null;
         float cur_distance = 9999.999f;
         foreach (Transform exit in shack.Exits) {
@@ -121,7 +133,6 @@ public class CustomerController : MonoBehaviour
                 closest = exit;
                 cur_distance = exit_distance;
             }
-            Debug.Log(cur_distance);
         }
 
         target = closest;
